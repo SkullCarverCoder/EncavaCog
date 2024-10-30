@@ -4,8 +4,7 @@ from typing import List
 import lavalink
 from lavalink import NodeNotFound
 import discord
-from redbot.cogs.audio.core import commands as audiocommands
-from redbot.core import commands
+from redbot.cogs.audio.core import Audio
 from redbot.core import app_commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
@@ -19,10 +18,10 @@ class Platform(Enum):
 
 
 class EncavaCog(
-    audiocommands.Commands,
-    commands.Cog):
+    Audio):
 
     def __init__(self, bot):
+        super().__init__(bot)
         self.bot = bot
 
     @app_commands.command(name="pplay")
