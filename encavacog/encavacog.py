@@ -26,7 +26,7 @@ class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
     music =app_commands.Group(name="music", description="Music related commands")
 
     @music.command(name="encavaplay", description="Play a song from the encavacog")
-    @app_commands.guild_only()
+    @commands.guild_only()
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
     async def command_play(self, query: str, platform: Platform, ctx: commands.Context, interaction: discord.Interaction):
