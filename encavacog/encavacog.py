@@ -8,7 +8,6 @@ from redbot.cogs.audio.core import commands as audiocommands
 from redbot.core import commands
 from redbot.core import app_commands
 from redbot.cogs.audio.audio_dataclasses import Query
-from redbot.cogs.audio.core.cog_utils import CompositeMetaClass
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
 
@@ -21,8 +20,7 @@ class Platform(Enum):
 
 class EncavaCog(
     audiocommands.Commands,
-    commands.Cog,
-    metaclass=CompositeMetaClass):
+    commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
