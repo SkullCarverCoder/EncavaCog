@@ -23,10 +23,10 @@ class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="pplay", description="Play a song from the encavacog")
+    @commands.hybrid_command(name="pplay")
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
-    @commands.guild_only()
+    @app_commands.guild_only()
     async def pplay(self, interaction: discord.Interaction, platform: Platform,  query: str, ctx: commands.Context):
         actual_query: Query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
