@@ -29,7 +29,7 @@ class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
     async def command_play(self, ctx: commands.Context, interaction: discord.Interaction, query_string: str, platform: Optional[app_commands.Choice[str]] = None):
         query: Query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
-        if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query)
+        if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
