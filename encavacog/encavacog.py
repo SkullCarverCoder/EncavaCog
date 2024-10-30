@@ -1,3 +1,4 @@
+from enum import Enum
 from pathlib import Path
 from typing import Optional, List
 import lavalink
@@ -12,6 +13,9 @@ from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
 
 _ = Translator("Audio", Path(__file__))
 
+class Platform(Enum):
+    Youtube = "youtube"
+
 
 class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
 
@@ -20,16 +24,14 @@ class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
 
     music =app_commands.Group(name="music", description="Music related commands")
 
-    @app_commands.command(name="play")
+    @music.command(name="encavaplay", description="Play a song from the encavacog")
     @app_commands.guild_only()
-    @app_commands.choices(platform=[
-        app_commands.Choice(name="Youtube",value="youtube")
-    ])
+    @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
-    async def command_play(self, ctx: commands.Context, interaction: discord.Interaction, query_string: str, platform: Optional[app_commands.Choice[str]] = None):
-        query: Query = Query.process_input(query, self.local_folder_current_path)
+    async def command_play(self, query: str, platform: Platform, ctx: commands.Context, interaction: discord.Interaction):
+        actual_query: Query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
-        if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+        if not await self.is_query_allowed(self.config, ctx, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
@@ -87,15 +89,15 @@ class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You must be in the voice channel to use the play command."),
             )
         if platform == "youtube":
-            if query.is_url and query.is_youtube:
-                query_raw_string = query.uri
+            if actual_query.is_url and actual_query.is_youtube:
+                query_raw_string = actual_query.uri
             tracks: List[LavalinkCacheFetchResult] = self.api_interface.local_cache_api.lavalink.fetch_all(
                 {"query": query_raw_string}
             )
             return await self.send_embed_msg(
                 ctx,
                 title=_("Result"),
-                description="".join([str(track.query) for track in tracks])
+                description="```\n" + "".join([str(track.query) for track in tracks]) + "\n```"
             )
         else:
              return await self.send_embed_msg(
