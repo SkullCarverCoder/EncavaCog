@@ -15,6 +15,7 @@ _ = Translator("Audio", Path(__file__))
 
 class Platform(Enum):
     Youtube = "youtube"
+    Soundcloud = "soundcloud"
 
 
 class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
