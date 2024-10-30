@@ -7,7 +7,6 @@ import discord
 from redbot.core import commands, app_commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.cogs.audio.core.abc import MixinMeta
-from redbot.cogs.audio.core.cog_utils import CompositeMetaClass
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
 
@@ -18,7 +17,7 @@ class Platform(Enum):
     Soundcloud = "soundcloud"
 
 
-class EncavaCog(commands.Cog, MixinMeta, metaclass=CompositeMetaClass):
+class EncavaCog(commands.Cog, MixinMeta):
 
     def __init__(self, bot):
         self.bot = bot
