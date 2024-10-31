@@ -10,7 +10,6 @@ from redbot.cogs.audio.apis.interface import AudioAPIInterface
 from redbot.core import app_commands, commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
-from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
 
 import discord.ext
 
@@ -66,13 +65,15 @@ class EncavaCog(
                 if await self.bot.is_owner(author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(actual_context, title=msg, description=desc)
+        player = lavalink.get_player(guild.id)
+        player.store("notify_channel", interaction.channel.id)
+        await self._eq_check(actual_context, player)
+        await self.set_player_settings(actual_context)
         if platform == Platform.Youtube:
-            if actual_query.is_url and actual_query.is_youtube:
-                query_raw_string = actual_query.uri
-            else:
-                query_raw_string = query
-            tracks: List[LavalinkCacheFetchResult] = await self.api_interface.local_cache_api.lavalink.fetch_all(
-                {"query": query_raw_string}
+            tracks = await self.api_interface.fetch_track(
+                ctx=actual_context,
+                player=player,
+                query=actual_query
             )
             return await self.send_embed_msg(
                 actual_context,
@@ -111,10 +112,6 @@ class EncavaCog(
             )
         except Exception as e:
             raise e
-        player = lavalink.get_player(guild.id)
-        player.store("notify_channel", interaction.channel.id)
-        await self._eq_check(actual_context, player)
-        await self.set_player_settings(actual_context)
         can_skip = await self._can_instaskip(actual_context, author)
         if (not author.voice or author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
