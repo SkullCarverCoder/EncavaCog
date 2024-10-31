@@ -6,6 +6,7 @@ import lavalink
 from lavalink import NodeNotFound
 import discord
 from redbot.cogs.audio.core import Audio
+from redbot.cogs.audio.apis.interface import AudioAPIInterface
 from redbot.core import app_commands, commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
@@ -27,6 +28,7 @@ class EncavaCog(
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
+        self.api_interface =AudioAPIInterface(self.bot, self.config, self.session, self.db_conn, self)
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
