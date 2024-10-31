@@ -81,7 +81,7 @@ class EncavaCog(
                 )
             await lavalink.connect(
                 author.voice.channel,
-                self_deaf=self.config.guild_from_id(guild.id).auto_deafen(),
+                self_deaf=self.config.guild(guild).auto_deafen(),
             )
         except AttributeError as e:
             raise e
