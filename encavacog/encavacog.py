@@ -64,6 +64,18 @@ class EncavaCog(
                 if await self.bot.is_owner(author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(actual_context, title=msg, description=desc)
+        if platform == "youtube":
+            if actual_query.is_url and actual_query.is_youtube:
+                query_raw_string = actual_query.uri
+            tracks: List[LavalinkCacheFetchResult] = self.api_interface.local_cache_api.lavalink.fetch_all(
+                {"query": query_raw_string}
+            )
+            return await self.send_embed_msg(
+                actual_context,
+                title=_("Result"),
+                description="```\n" +
+                "".join([str(track.query) for track in tracks]) + "\n```"
+            )
         try:
             if (
                 not self.can_join_and_speak(author.voice.channel)
@@ -94,6 +106,8 @@ class EncavaCog(
                 description=_(
                     "Connection to Lavalink node has not yet been established."),
             )
+        except Exception as e:
+            raise e
         player = lavalink.get_player(guild.id)
         player.store("notify_channel", interaction.channel.id)
         await self._eq_check(actual_context, player)
@@ -105,18 +119,6 @@ class EncavaCog(
                 title=_("Unable To Play Tracks"),
                 description=_(
                     "You must be in the voice channel to use the play command."),
-            )
-        if platform == "youtube":
-            if actual_query.is_url and actual_query.is_youtube:
-                query_raw_string = actual_query.uri
-            tracks: List[LavalinkCacheFetchResult] = self.api_interface.local_cache_api.lavalink.fetch_all(
-                {"query": query_raw_string}
-            )
-            return await self.send_embed_msg(
-                actual_context,
-                title=_("Result"),
-                description="```\n" +
-                "".join([str(track.query) for track in tracks]) + "\n```"
             )
         return await self.send_embed_msg(
             actual_context,
