@@ -81,9 +81,10 @@ class EncavaCog(
                 )
             await lavalink.connect(
                 author.voice.channel,
-                self_deaf=await self.config.guild_from_id(guild.id).auto_deafen(),
+                self_deaf=self.config.guild_from_id(guild.id).auto_deafen(),
             )
-        except AttributeError:
+        except AttributeError as e:
+            raise e
             return await self.send_embed_msg(
                 actual_context,
                 title=_("Unable To Play Tracks"),
