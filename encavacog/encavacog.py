@@ -1,12 +1,11 @@
 from enum import Enum
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List
 import lavalink
 from lavalink import NodeNotFound
 import discord
 from redbot.cogs.audio.core import Audio
-from redbot.core import app_commands
-from redbot.core import Config
+from redbot.core import app_commands, commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
@@ -33,7 +32,8 @@ class EncavaCog(
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
-        ctx = interaction.context
+        ctx: app_commands.AppCommandContext = interaction.context
+        actual_context = commands.Context({"command": interaction.command, "bot": self.bot})
         author = interaction.user
         guild = interaction.guild
         if guild is None or isinstance(guild, bool):
@@ -50,17 +50,17 @@ class EncavaCog(
             )
         if guild_data["dj_enabled"]:
             return await self.send_embed_msg(
-                ctx,
+                actual_context,
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
             )
-        if not self._player_check(ctx):
+        if not self._player_check(actual_context):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink node has failed")
                 desc = None
                 if await self.bot.is_owner(author):
                     desc = _("Please check your console or logs for details.")
-                return await self.send_embed_msg(ctx, title=msg, description=desc)
+                return await self.send_embed_msg(actual_context, title=msg, description=desc)
         try:
             if (
                 not self.can_join_and_speak(author.voice.channel)
@@ -68,7 +68,7 @@ class EncavaCog(
                 and self.is_vc_full(author.voice.channel)
             ):
                 return await self.send_embed_msg(
-                    ctx,
+                    actual_context,
                     title=_("Unable To Play Tracks"),
                     description=_(
                         "I don't have permission to connect and speak in your channel."
@@ -80,25 +80,25 @@ class EncavaCog(
             )
         except AttributeError:
             return await self.send_embed_msg(
-                ctx,
+                actual_context,
                 title=_("Unable To Play Tracks"),
                 description=_("Connect to a voice channel first."),
             )
         except NodeNotFound:
             return await self.send_embed_msg(
-                ctx,
+                actual_context,
                 title=_("Unable To Play Tracks"),
                 description=_(
                     "Connection to Lavalink node has not yet been established."),
             )
         player = lavalink.get_player(guild.id)
         player.store("notify_channel", interaction.channel.id)
-        await self._eq_check(ctx, player)
-        await self.set_player_settings(ctx)
-        can_skip = await self._can_instaskip(ctx, author)
+        await self._eq_check(actual_context, player)
+        await self.set_player_settings(actual_context)
+        can_skip = await self._can_instaskip(actual_context, author)
         if (not author.voice or author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
-                ctx,
+                actual_context,
                 title=_("Unable To Play Tracks"),
                 description=_(
                     "You must be in the voice channel to use the play command."),
@@ -110,13 +110,13 @@ class EncavaCog(
                 {"query": query_raw_string}
             )
             return await self.send_embed_msg(
-                ctx,
+                actual_context,
                 title=_("Result"),
                 description="```\n" +
                 "".join([str(track.query) for track in tracks]) + "\n```"
             )
         return await self.send_embed_msg(
-            ctx,
+            actual_context,
             title=_("Unable To Play Tracks"),
             description=_("Platform not supported "),
         )
