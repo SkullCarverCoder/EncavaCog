@@ -27,7 +27,8 @@ class EncavaCog(
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.api_interface =AudioAPIInterface(self.bot, self.config, self.session, self.db_conn, self)
+        self.api_interface = AudioAPIInterface(self.bot, self.config, self.session, self.db_conn, self)
+        self.api_interface.initialize()
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
@@ -65,21 +66,6 @@ class EncavaCog(
                 if await self.bot.is_owner(author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(actual_context, title=msg, description=desc)
-        player = lavalink.get_player(guild.id)
-        player.store("notify_channel", interaction.channel.id)
-        await self._eq_check(actual_context, player)
-        await self.set_player_settings(actual_context)
-        if platform == Platform.Youtube:
-            tracks = await self.api_interface.fetch_track(
-                ctx=actual_context,
-                player=player,
-                query=actual_query
-            )
-            return await self.send_embed_msg(
-                actual_context,
-                title=_("Result"),
-                description=f"tracks are: {tracks}"
-            )
         try:
             if (
                 not self.can_join_and_speak(author.voice.channel)
@@ -112,7 +98,22 @@ class EncavaCog(
             )
         except Exception as e:
             raise e
+        player = lavalink.get_player(guild.id)
+        player.store("notify_channel", interaction.channel.id)
+        await self._eq_check(actual_context, player)
+        await self.set_player_settings(actual_context)
         can_skip = await self._can_instaskip(actual_context, author)
+        if platform == Platform.Youtube:
+            tracks = await self.api_interface.fetch_track(
+                ctx=actual_context,
+                player=player,
+                query=actual_query
+            )
+            return await self.send_embed_msg(
+                actual_context,
+                title=_("Result"),
+                description=f"tracks are: {tracks}"
+            )
         if (not author.voice or author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
                 actual_context,
