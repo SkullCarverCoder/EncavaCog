@@ -23,21 +23,20 @@ class EncavaCog(
         super().__init__(bot)
         self.bot = bot
 
-    @app_commands.guild_only()
     @app_commands.command(name="play", description="Query a song to be played in a voice channel from a platform you choose")
+    @app_commands.guild_only
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
         ctx = interaction.context
-        
         author = interaction.user
         guild = interaction.user.guild
-        channel = interaction.channel
-        guild_data = await self.config.guild(guild).all()
-        if not guild:
+        if not guild or isinstance(guild, bool):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description="You can only run this command only inside a server"
             )
+        channel = interaction.channel
+        guild_data = await self.config.guild(guild).all()
         actual_query: Query = await Query.process_input(query, self.local_folder_current_path)
         if not await self.is_query_allowed(self.config, channel, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
