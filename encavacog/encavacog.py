@@ -36,7 +36,7 @@ class EncavaCog(
         author = interaction.user
         guild = interaction.guild
         if guild is None or isinstance(guild, bool):
-            await interaction.response.send_message(
+            return await interaction.response.send_message(
                 content="You can only run this command only inside a server"
             )
         channel = interaction.channel
