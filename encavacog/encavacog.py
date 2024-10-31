@@ -33,7 +33,7 @@ class EncavaCog(
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
         ctx: app_commands.AppCommandContext = interaction.context
-        actual_context = commands.Context({"command": interaction.command, "bot": self.bot})
+        actual_context = commands.Context()
         author = interaction.user
         guild = interaction.guild
         if guild is None or isinstance(guild, bool):
