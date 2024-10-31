@@ -24,6 +24,7 @@ class EncavaCog(
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
+        self.config = bot._config
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
