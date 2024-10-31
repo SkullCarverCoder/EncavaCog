@@ -6,7 +6,7 @@ import lavalink
 from lavalink import NodeNotFound
 import discord
 from redbot.cogs.audio.core import Audio
-from redbot.core import app_commands
+from redbot.core import app_commands, commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
@@ -36,7 +36,8 @@ class EncavaCog(
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
         ctx: app_commands.AppCommandContext = interaction.context
-        actual_context = await discord.ext.commands.Context.from_interaction(interaction.data)
+        app_command_interaction = discord.interactions.Interaction(data=interaction.data, state=interaction._state)
+        actual_context = await commands.Context.from_interaction(app_command_interaction)
         author = interaction.user
         guild = interaction.guild
         if guild is None or isinstance(guild, bool):
