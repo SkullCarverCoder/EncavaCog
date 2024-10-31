@@ -69,7 +69,7 @@ class EncavaCog(
         try:
             if (
                 not self.can_join_and_speak(author.voice.channel)
-                or not author.voice.channel.permissions_for(self.bot).move_members
+                or not author.voice.channel.permissions_for(actual_context.me).move_members
                 and self.is_vc_full(author.voice.channel)
             ):
                 return await self.send_embed_msg(
@@ -80,11 +80,10 @@ class EncavaCog(
                     ),
                 )
             await lavalink.connect(
-                author.voice.channel,
+                channel=author.voice.channel,
                 self_deaf=True,
             )
         except AttributeError as e:
-            raise e
             return await self.send_embed_msg(
                 actual_context,
                 title=_("Unable To Play Tracks"),
