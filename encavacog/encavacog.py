@@ -23,8 +23,8 @@ class EncavaCog(
         super().__init__(bot)
         self.bot = bot
 
-    @app_commands.command(name="play",)
     @app_commands.guild_only()
+    @app_commands.command(name="play", description="Query a song to be played in a voice channel from a platform you choose")
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
