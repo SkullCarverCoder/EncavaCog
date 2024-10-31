@@ -71,7 +71,7 @@ class EncavaCog(
                 query_raw_string = actual_query.uri
             else:
                 query_raw_string = query
-            tracks: List[LavalinkCacheFetchResult] = self.api_interface.local_cache_api.lavalink.fetch_all(
+            tracks: List[LavalinkCacheFetchResult] = await self.api_interface.local_cache_api.lavalink.fetch_all(
                 {"query": query_raw_string}
             )
             return await self.send_embed_msg(
