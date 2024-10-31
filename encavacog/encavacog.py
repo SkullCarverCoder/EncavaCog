@@ -69,6 +69,8 @@ class EncavaCog(
         if platform == Platform.Youtube:
             if actual_query.is_url and actual_query.is_youtube:
                 query_raw_string = actual_query.uri
+            else:
+                query_raw_string = query
             tracks: List[LavalinkCacheFetchResult] = self.api_interface.local_cache_api.lavalink.fetch_all(
                 {"query": query_raw_string}
             )
