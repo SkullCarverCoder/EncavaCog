@@ -16,7 +16,6 @@ class Platform(Enum):
     Youtube = "youtube"
     Soundcloud = "soundcloud"
 
-
 class EncavaCog(
     Audio):
 
@@ -24,14 +23,16 @@ class EncavaCog(
         super().__init__(bot)
         self.bot = bot
 
-    @app_commands.command(name="pplay")
+    @app_commands.command(name="play",)
     @app_commands.guild_only()
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
-    async def pplay(self, interaction: discord.Interaction, platform: Platform,  query: str):
+    async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
         ctx = interaction.context
+        author = interaction.user
+        guild = interaction.guild
         actual_query: Query = Query.process_input(query, self.local_folder_current_path)
-        guild_data = await self.config.guild(ctx.guild).all()
+        guild_data = await self.config.guild(guild).all()
         if not await self.is_query_allowed(self.config, ctx, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
@@ -46,14 +47,14 @@ class EncavaCog(
              if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink node has failed")
                 desc = None
-                if await self.bot.is_owner(ctx.author):
+                if await self.bot.is_owner(author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=desc)
         try:
             if (
-                not self.can_join_and_speak(ctx.author.voice.channel)
-                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.is_vc_full(ctx.author.voice.channel)
+                not self.can_join_and_speak(author.voice.channel)
+                or not author.voice.channel.permissions_for(self.bot).move_members
+                and self.is_vc_full(author.voice.channel)
             ):
                 return await self.send_embed_msg(
                     ctx,
@@ -63,8 +64,8 @@ class EncavaCog(
                     ),
                 )
             await lavalink.connect(
-                ctx.author.voice.channel,
-                self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                author.voice.channel,
+                self_deaf=await self.config.guild_from_id(guild.id).auto_deafen(),
             )
         except AttributeError:
             return await self.send_embed_msg(
@@ -78,12 +79,12 @@ class EncavaCog(
                 title=_("Unable To Play Tracks"),
                 description=_("Connection to Lavalink node has not yet been established."),
             )
-        player = lavalink.get_player(ctx.guild.id)
-        player.store("notify_channel", ctx.channel.id)
+        player = lavalink.get_player(guild.id)
+        player.store("notify_channel", interaction.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
-        can_skip = await self._can_instaskip(ctx, ctx.author)
-        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+        can_skip = await self._can_instaskip(ctx, author)
+        if (not author.voice or author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
