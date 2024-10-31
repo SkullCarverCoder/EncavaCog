@@ -32,8 +32,8 @@ class EncavaCog(
         author = interaction.user
         guild = interaction.user.guild
         if not guild or isinstance(guild, bool):
-            return await self.send_embed_msg(
-                ctx, title=_("Unable To Play Tracks"), description="You can only run this command only inside a server"
+            await interaction.response.send_message(
+                "You can only run this command only inside a server"
             )
         channel = interaction.channel
         guild_data = await self.config.guild(guild).all()
