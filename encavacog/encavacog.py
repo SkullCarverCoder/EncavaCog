@@ -33,13 +33,13 @@ class EncavaCog(
         author = interaction.user
         guild = interaction.user.guild
         channel = interaction.channel
-        actual_query: Query = Query.process_input(query, self.local_folder_current_path)
+        guild_data = await self.config.guild(guild).all()
         if not guild:
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description="You can only run this command only inside a server"
             )
-        guild_data = await self.config.guild(guild).all()
-        if not await self.is_query_allowed(self.bot.config, channel, f"{actual_query}", query_obj=actual_query):
+        actual_query: Query = await Query.process_input(query, self.local_folder_current_path)
+        if not await self.is_query_allowed(self.config, channel, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
