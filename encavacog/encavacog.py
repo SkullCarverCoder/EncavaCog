@@ -26,23 +26,6 @@ class EncavaCog(
         super().__init__(bot)
         self.bot = bot
         self.config = bot._config
-        
-    async def is_query_allowed(
-        self,
-        config: Config,
-        ctx_or_channel: Optional[
-            Union[
-                discord.AppCommandContext,
-                discord.TextChannel,
-                discord.VoiceChannel,
-                discord.StageChannel,
-                discord.Thread,
-            ]
-        ],
-        query: str,
-        query_obj: Query,
-    ) -> bool:
-        return True
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
