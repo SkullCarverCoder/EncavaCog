@@ -1,11 +1,12 @@
 from enum import Enum
 from pathlib import Path
-from typing import List
+from typing import List, Union, Optional
 import lavalink
 from lavalink import NodeNotFound
 import discord
 from redbot.cogs.audio.core import Audio
 from redbot.core import app_commands
+from redbot.core import Config
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
@@ -25,6 +26,23 @@ class EncavaCog(
         super().__init__(bot)
         self.bot = bot
         self.config = bot._config
+        
+    async def is_query_allowed(
+        self,
+        config: Config,
+        ctx_or_channel: Optional[
+            Union[
+                discord.AppCommandContext,
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.Thread,
+            ]
+        ],
+        query: str,
+        query_obj: Query,
+    ) -> bool:
+        return True
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
