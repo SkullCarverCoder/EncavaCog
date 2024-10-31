@@ -1,14 +1,17 @@
 from enum import Enum
 from pathlib import Path
 from typing import List
+import discord.ext.commands
 import lavalink
 from lavalink import NodeNotFound
 import discord
 from redbot.cogs.audio.core import Audio
-from redbot.core import app_commands, commands
+from redbot.core import app_commands
 from redbot.cogs.audio.audio_dataclasses import Query
 from redbot.core.i18n import Translator
 from redbot.cogs.audio.apis.api_utils import LavalinkCacheFetchResult
+
+import discord.ext
 
 _ = Translator("Audio", Path(__file__))
 
@@ -33,7 +36,7 @@ class EncavaCog(
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
         ctx: app_commands.AppCommandContext = interaction.context
-        actual_context = commands.Context()
+        actual_context = await discord.ext.commands.Context.from_interaction(interaction.data)
         author = interaction.user
         guild = interaction.guild
         if guild is None or isinstance(guild, bool):
