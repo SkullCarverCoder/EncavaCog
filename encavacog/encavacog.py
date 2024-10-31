@@ -43,7 +43,7 @@ class EncavaCog(
             )
         channel = interaction.channel
         guild_data = await self.config.guild(guild).all()
-        actual_query: Query = await Query.process_input(query, self.local_folder_current_path)
+        actual_query: Query = Query.process_input(query, self.local_folder_current_path)
         if not await self.is_query_allowed(self.config, 
                         channel, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
