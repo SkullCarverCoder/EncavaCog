@@ -77,8 +77,7 @@ class EncavaCog(
             return await self.send_embed_msg(
                 actual_context,
                 title=_("Result"),
-                description="```\n" +
-                "".join([str(track.query) for track in tracks]) + "\n```"
+                description=f"tracks are: {tracks}"
             )
         try:
             if (
