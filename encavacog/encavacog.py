@@ -35,6 +35,7 @@ class EncavaCog(
     @app_commands.describe(platform="Platform to lookup song/video")
     @app_commands.describe(query="Name of song/video")
     async def play(self, interaction: discord.Interaction, platform: Platform,  query: str):
+        await self.restore_players()
         ctx: app_commands.AppCommandContext = interaction.context
         actual_context = await commands.Context.from_interaction(interaction)
         author = interaction.user
@@ -46,6 +47,7 @@ class EncavaCog(
         channel = interaction.channel
         guild_data = await self.config.guild(guild).all()
         actual_query: Query = Query.process_input(query, self.local_folder_current_path)
+        restrict = await self.config.restrict()
         if not await self.is_query_allowed(self.config, 
                         channel, f"{actual_query}", query_obj=actual_query):
             return await self.send_embed_msg(
