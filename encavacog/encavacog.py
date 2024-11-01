@@ -97,8 +97,8 @@ class EncavaCog(
         #         description=_(
         #             "Connection to Lavalink node has not yet been established."),
         #     )
-        # except Exception as e:
-        #     raise e
+        except Exception as e:
+            raise e
         player = lavalink.get_player(guild.id)
         player.store("notify_channel", interaction.channel.id)
         await self._eq_check(actual_context, player)
