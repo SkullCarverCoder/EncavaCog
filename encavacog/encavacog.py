@@ -41,6 +41,7 @@ class EncavaCog(
         actual_context = await commands.Context.from_interaction(interaction)
         author = interaction.user
         guild = interaction.guild
+        await self.lavalink_attempt_connect(40, True)
         if guild is None or isinstance(guild, bool):
             return await interaction.response.send_message(
                 content="You can only run this command only inside a server"
@@ -79,7 +80,6 @@ class EncavaCog(
                         "I don't have permission to connect and speak in your channel."
                     ),
                 )
-            await self.lavalink_attempt_connect()
             await lavalink.connect(
                 channel=actual_context.author.voice.channel,
                 self_deaf=True,
