@@ -25,7 +25,7 @@ class EncavaCog(
         Audio):
 
     def __init__(self, bot) -> None:
-        super().__init__(bot)
+        super(Audio).__init__(bot)
         self.bot = bot
 
     @app_commands.command(name="play",
@@ -70,10 +70,8 @@ class EncavaCog(
                 or not author.voice.channel.permissions_for(actual_context.me).move_members
                 and self.is_vc_full(author.voice.channel)
             ):
-                return await self.send_embed_msg(
-                    actual_context,
-                    title=_("Unable To Play Tracks"),
-                    description=_(
+                return  await interaction.response.send_message(
+                    _("Unable To Play Tracks") + "\n" + _(
                         "I don't have permission to connect and speak in your channel."
                     ),
                 )
@@ -82,16 +80,12 @@ class EncavaCog(
                 self_deaf=True,
             )
         except AttributeError as e:
-            return await self.send_embed_msg(
-                actual_context,
-                title=_("Unable To Play Tracks"),
-                description=_("Connect to a voice channel first."),
+            return await interaction.response.send_message(
+                _("Unable To Play Tracks") + "\n" + _("Connect to a voice channel first."),
             )
         except NodeNotFound as e:
-            return await self.send_embed_msg(
-                actual_context,
-                title=_("Unable To Play Tracks"),
-                description=_(
+            return await interaction.response.send_message(
+                _("Unable To Play Tracks") + "\n" + _(
                     "Connection to Lavalink node has not yet been established."),
             )
         except Exception as e:
