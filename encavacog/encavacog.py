@@ -80,7 +80,7 @@ class EncavaCog(
                     ),
                 )
             await lavalink.connect(
-                channel=author.voice.channel,
+                channel=actual_context.author.voice.channel,
                 self_deaf=True,
             )
         except AttributeError as e:
@@ -89,7 +89,8 @@ class EncavaCog(
                 title=_("Unable To Play Tracks"),
                 description=_("Connect to a voice channel first."),
             )
-        except NodeNotFound:
+        except NodeNotFound as e:
+            raise e
             return await self.send_embed_msg(
                 actual_context,
                 title=_("Unable To Play Tracks"),
