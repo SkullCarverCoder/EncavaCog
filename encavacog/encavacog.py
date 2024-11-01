@@ -27,8 +27,6 @@ class EncavaCog(
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.api_interface = AudioAPIInterface(self.bot, self.config, self.session, self.db_conn, self)
-        self.api_interface.initialize()
 
     @app_commands.command(name="play",
         description="Query a song to be played in a voice channel from a platform you choose"
@@ -41,7 +39,6 @@ class EncavaCog(
         actual_context = await commands.Context.from_interaction(interaction)
         author = interaction.user
         guild = interaction.guild
-        await self.lavalink_attempt_connect(40, True)
         if guild is None or isinstance(guild, bool):
             return await interaction.response.send_message(
                 content="You can only run this command only inside a server"
