@@ -80,23 +80,23 @@ class EncavaCog(
                         "I don't have permission to connect and speak in your channel."
                     ),
                 )
-        #     await lavalink.connect(
-        #         channel=actual_context.author.voice.channel,
-        #         self_deaf=True,
-        #     )
-        # except AttributeError as e:
-        #     return await self.send_embed_msg(
-        #         actual_context,
-        #         title=_("Unable To Play Tracks"),
-        #         description=_("Connect to a voice channel first."),
-        #     )
-        # except NodeNotFound as e:
-        #     return await self.send_embed_msg(
-        #         actual_context,
-        #         title=_("Unable To Play Tracks"),
-        #         description=_(
-        #             "Connection to Lavalink node has not yet been established."),
-        #     )
+            await lavalink.connect(
+                channel=interaction.user.voice.channel,
+                self_deaf=True,
+            )
+        except AttributeError as e:
+            return await self.send_embed_msg(
+                actual_context,
+                title=_("Unable To Play Tracks"),
+                description=_("Connect to a voice channel first."),
+            )
+        except NodeNotFound as e:
+            return await self.send_embed_msg(
+                actual_context,
+                title=_("Unable To Play Tracks"),
+                description=_(
+                    "Connection to Lavalink node has not yet been established."),
+            )
         except Exception as e:
             raise e
         player = lavalink.get_player(guild.id)
