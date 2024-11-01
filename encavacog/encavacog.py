@@ -79,6 +79,7 @@ class EncavaCog(
                         "I don't have permission to connect and speak in your channel."
                     ),
                 )
+            await self.lavalink_attempt_connect()
             await lavalink.connect(
                 channel=actual_context.author.voice.channel,
                 self_deaf=True,
@@ -90,7 +91,6 @@ class EncavaCog(
                 description=_("Connect to a voice channel first."),
             )
         except NodeNotFound as e:
-            raise e
             return await self.send_embed_msg(
                 actual_context,
                 title=_("Unable To Play Tracks"),
