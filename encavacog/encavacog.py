@@ -110,11 +110,7 @@ class EncavaCog(
                 player=player,
                 query=actual_query
             )
-            return await self.send_embed_msg(
-                interaction.context,
-                title=_("Result"),
-                description=f"tracks are: {tracks}"
-            )
+            return await interaction.response.send_message(f"Tracks found were the following \n: {tracks}", ephemeral=True)
         if (not author.voice or author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
                 actual_context,
