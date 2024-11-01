@@ -25,7 +25,7 @@ class EncavaCog(
         Audio):
 
     def __init__(self, bot) -> None:
-        super(Audio).__init__(bot)
+        super().__init__()
         self.bot = bot
 
     @app_commands.command(name="play",
