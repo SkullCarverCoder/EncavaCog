@@ -111,7 +111,7 @@ class EncavaCog(
                 query=actual_query
             )
             return await self.send_embed_msg(
-                actual_context,
+                interaction.context,
                 title=_("Result"),
                 description=f"tracks are: {tracks}"
             )
