@@ -74,6 +74,7 @@ class EncavaCog(
                     _("Unable To Play Tracks") + "\n" + _(
                         "I don't have permission to connect and speak in your channel."
                     ),
+                    ephemeral=True
                 )
             await lavalink.connect(
                 channel=interaction.user.voice.channel,
@@ -82,11 +83,13 @@ class EncavaCog(
         except AttributeError as e:
             return await interaction.response.send_message(
                 _("Unable To Play Tracks") + "\n" + _("Connect to a voice channel first."),
+                ephemeral=True
             )
         except NodeNotFound as e:
             return await interaction.response.send_message(
                 _("Unable To Play Tracks") + "\n" + _(
                     "Connection to Lavalink node has not yet been established."),
+                ephemeral=True
             )
         except Exception as e:
             raise e
